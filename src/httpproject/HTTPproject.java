@@ -14,7 +14,8 @@ public class HTTPproject {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        //and nobody notices anything.....
-        System.out.println("welcome to the club");
+        Runnable server1 = new WebServer();
+        Thread thread1 = new Thread(server1);
+        thread1.start();
     }
 }
