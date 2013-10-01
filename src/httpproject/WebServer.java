@@ -50,22 +50,23 @@ public class WebServer implements Runnable {
             String[] splitResult = clientSentence.split(" ");
             System.out.println(splitResult[1]);
 
+            if (splitResult[0].equals("GET")) {
+                FileInputStream file = new FileInputStream(new File(ROOT_CATALOG + splitResult[1]));
 
-            FileInputStream file = new FileInputStream(new File(ROOT_CATALOG + splitResult[1]));
 
+                outToClient.println("HTTP/1.0 200 OK\r\n"
+                        + "\r\n");
+                copy(file, outToClient);
 
-            outToClient.println("HTTP/1.0 200 OK\r\n"
-                    + "\r\n");
-            copy(file, outToClient);
-
-            outToClient.flush();
+                outToClient.flush();
+            } else {
+                outToClient.println("HTTP/1.0 400 BAD REQUEST" + "\r\n" + "\r\n");
+            }
             connectionSocket.close();
         } catch (FileNotFoundException fnf) {
             outToClient.println("HTTP/1.0 404 NOT FOUND" + "\r\n" + "\r\n");
         } catch (IOException ex) {
             Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);
-            
-           
         }
     }
 
