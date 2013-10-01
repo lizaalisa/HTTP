@@ -48,19 +48,24 @@ public class WebServer implements Runnable {
             outToClient = new PrintStream(
                     connectionSocket.getOutputStream());
             String clientSentence = inFromClient.readLine();
-            MyLogger.logger.log(Level.FINEST,"Request from client received");
+            MyLogger.logger.log(Level.FINEST, "Request from client received");
             String[] splitResult = clientSentence.split(" ");
-            FileInputStream file = new FileInputStream(new File(ROOT_CATALOG + splitResult[1]));
-            outToClient.println("HTTP/1.0 200 OK\r\n"
-                    + "\r\n");
-            copy(file, outToClient);
-            MyLogger.logger.log(Level.FINEST, "Response to client sent");
-            outToClient.flush();
+            System.out.println(splitResult[1]);
+            if (splitResult[0].equals("GET")) {
+                FileInputStream file = new FileInputStream(new File(ROOT_CATALOG + splitResult[1]));
+                outToClient.println("HTTP/1.0 200 OK\r\n"
+                        + "\r\n");
+                copy(file, outToClient);
+                MyLogger.logger.log(Level.FINEST, "Response to client sent");
+                outToClient.flush();
+            } else {
+                outToClient.println("HTTP/1.0 400 BAD REQUEST" + "\r\n" + "\r\n");
+            }
             connectionSocket.close();
         } catch (FileNotFoundException fnf) {
             outToClient.println("HTTP/1.0 404 NOT FOUND" + "\r\n" + "\r\n");
         } catch (IOException ex) {
-            Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);  
+            Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
