@@ -25,7 +25,6 @@ public class Handler implements Runnable {
         connection = theconnection;
     }
     
-    
 
     public void run() {
 
@@ -33,16 +32,14 @@ public class Handler implements Runnable {
             BufferedReader inFromClient = new BufferedReader(
                     new InputStreamReader(connection.getInputStream()));
             PrintStream outToClient = new PrintStream(
-                    connection.getOutputStream());
+                    connection.getOutputStream());  
             String clientSentence = inFromClient.readLine();
-            while (clientSentence != null) {
                 System.out.println("FROM CLIENT: " + nextline + clientSentence);
                 String capitalizedSentence = clientSentence.toUpperCase();
-                //what the hell is up with this code? it works fine without making new lines, but it does not look anywhere as nice -.-
-                outToClient.println("Sentence: " + nextline + capitalizedSentence + nextline + " has been recived.");
-                outToClient.flush();
                 clientSentence = inFromClient.readLine();
-
+                outToClient.println("HTTP/1.0 200 OK"+"\r\n" +"\r\n"+ );
+                outToClient.flush();
+                
                 //And what am i suppouse to do with this!?
 //                private static void copy(final InputStream input, final OutputStream output) throws IOException {
 //        final byte[] buffer = new byte[1024];
@@ -53,7 +50,6 @@ public class Handler implements Runnable {
 //        }
 //    }
                 //this is just me assuming, but could it be something with making a file/filewriter
-            }
             connection.close();
 
         } //try
