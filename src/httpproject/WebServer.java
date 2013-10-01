@@ -47,7 +47,6 @@ public class WebServer implements Runnable {
             outToClient = new PrintStream(
                     connectionSocket.getOutputStream());
             String clientSentence = inFromClient.readLine();
-//            System.out.println("FROM CLIENT: " + nextline + clientSentence);
             String[] splitResult = clientSentence.split(" ");
             System.out.println(splitResult[1]);
 
@@ -60,16 +59,13 @@ public class WebServer implements Runnable {
             copy(file, outToClient);
 
             outToClient.flush();
+            connectionSocket.close();
         } catch (FileNotFoundException fnf) {
             outToClient.println("HTTP/1.0 404 NOT FOUND" + "\r\n" + "\r\n");
         } catch (IOException ex) {
             Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                inFromClient.close();
-            } catch (IOException ex) {
-                Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
+           
         }
     }
 
