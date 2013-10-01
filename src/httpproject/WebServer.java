@@ -7,12 +7,8 @@ package httpproject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
-import java.io.PrintWriter;
 import java.lang.String;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,35 +38,33 @@ public class WebServer implements Runnable {
         BufferedReader inFromClient = null;
         PrintStream outToClient = null;
         try {
+            new MyLogger();
+        } catch (IOException ex) {
+            Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
             inFromClient = new BufferedReader(
                     new InputStreamReader(connectionSocket.getInputStream()));
             outToClient = new PrintStream(
                     connectionSocket.getOutputStream());
             String clientSentence = inFromClient.readLine();
+            MyLogger.logger.log(Level.FINEST,"Request from client received");
             String[] splitResult = clientSentence.split(" ");
-            System.out.println(splitResult[1]);
-
-
             FileInputStream file = new FileInputStream(new File(ROOT_CATALOG + splitResult[1]));
-
-
             outToClient.println("HTTP/1.0 200 OK\r\n"
                     + "\r\n");
             copy(file, outToClient);
-
+            MyLogger.logger.log(Level.FINEST, "Response to client sent");
             outToClient.flush();
             connectionSocket.close();
         } catch (FileNotFoundException fnf) {
             outToClient.println("HTTP/1.0 404 NOT FOUND" + "\r\n" + "\r\n");
         } catch (IOException ex) {
-            Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);
-            
-           
+            Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);  
         }
     }
 
     private void copy(final FileInputStream input, final OutputStream output) throws IOException {
-//        FileInputStream file = new FileInputStream(new File(ROOT_CATALOG + filename ));
         final byte[] buffer = new byte[1024];
         while (true) {
             int bytesRead = input.read(buffer);
